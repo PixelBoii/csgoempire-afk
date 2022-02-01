@@ -1,0 +1,13 @@
+{
+  "name": "csgoempire-afk-system",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "online": "node src/index.js online",
+    "offline": "node src/index.js offline"
+  },
+  "dependencies": {
+    "csgoempire-wrapper": "^0.1.2",
+    "dotenv": "^15.0.0"
+  }
+}
