@@ -36,10 +36,10 @@ if (cmd == 'offline') {
 }
 
 if (cmd == 'online') {
-    account.getInventory().then(async inventory => {
-        let local_state = JSON.parse(fs.readFileSync('./state.json', 'utf8'));
+    if (fs.existsSync('./state.json')) {
+        account.getInventory().then(async inventory => {
+            let local_state = JSON.parse(fs.readFileSync('./state.json', 'utf8'));
 
-        if (local_state) {
             local_state.forEach(saved_item => {
                 let item = inventory.items.find(item => item.id == saved_item.id);
 
@@ -53,8 +53,8 @@ if (cmd == 'online') {
             fs.writeFileSync('./state.json', JSON.stringify([]));
 
             console.log('Inventory loaded from state.json');
-        } else {
-            console.error('No state file found. Please run `node index.js offline` first.');
-        }
-    });
+        });
+    } else {
+        console.error('No state file found. Please run `node index.js offline` first.');
+    }
 }
