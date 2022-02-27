@@ -15,4 +15,5 @@ Easily delist all your items whenever you go AFK, and easily relist them wheneve
 Execute `npm run offline` or `node index.js offline` in the root folder.
 
 ### Going online
-Execute `npm run online` or `node index.js online` in the root folder.
+Execute `npm run online` or `node index.js online` in the root folder. This will automatically relist all your items for the same **custom percentage** as they were previously listed for. If you wish to list them for the same price (rounded to the closest percentage) instead, you can execute `npm run online -- --same-price` or `node index.js online --same-price` instead.
+

@@ -1,13 +1,5 @@
 require('dotenv').config();
 
-const cmd = process.argv[2];
-
-if (!['online', 'offline'].includes(cmd)) {
-    console.log('Usage: node src/index.js [online|offline]');
-
-    process.exit(1);
-}
-
 const { CSGOEmpire } = require('csgoempire-wrapper');
 const fs = require('fs');
 
@@ -15,7 +7,7 @@ const account = new CSGOEmpire(process.env.API_KEY, {
     connectToSocket: false,
 });
 
-if (cmd == 'offline') {
+if (process.argv.includes('offline')) {
     account.getActiveTrades().then(trades => {
         let state = [];
 
@@ -26,6 +18,7 @@ if (cmd == 'offline') {
                 id: item.id,
                 market_name: item.market_name,
                 custom_price_percentage: item.custom_price_percentage,
+                market_value: item.market_value,
             });
         });
 
@@ -33,10 +26,12 @@ if (cmd == 'offline') {
 
         console.log('Inventory saved to state.json');
     });
-}
-
-if (cmd == 'online') {
+} else if (process.argv.includes('online')) {
     if (fs.existsSync('./state.json')) {
+        if (process.argv.includes('--same-price')) {
+            console.log('Depositing items for the same price as they were taken offline with. Note: This might be slightly off, as it will be rounded to the nearest percentage.');
+        }
+
         account.getInventory().then(async inventory => {
             let local_state = JSON.parse(fs.readFileSync('./state.json', 'utf8'));
 
@@ -44,7 +39,11 @@ if (cmd == 'online') {
                 let item = inventory.items.find(item => item.id == saved_item.id);
 
                 if (item) {
-                    item.deposit(saved_item.custom_price_percentage);
+                    if (process.argv.includes('--same-price')) {
+                        item.depositForValue(saved_item.market_value);
+                    } else {
+                        item.deposit(saved_item.custom_price_percentage);
+                    }
                 } else {
                     console.log('Item not found: ', saved_item.market_name);
                 }
@@ -57,4 +56,6 @@ if (cmd == 'online') {
     } else {
         console.error('No state file found. Please run `node index.js offline` first.');
     }
+} else {
+    console.log('Usage: node src/index.js [online|offline] [-- --same-price]');
 }
