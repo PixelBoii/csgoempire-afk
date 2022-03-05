@@ -42,22 +42,35 @@ if (process.argv.includes('offline')) {
 
         account.getInventory().then(async inventory => {
             let local_state = JSON.parse(fs.readFileSync('./state.json', 'utf8'));
+            let deposited_item_ids = [];
 
-            local_state.forEach(saved_item => {
+            for (let saved_item of local_state) {
                 let item = inventory.items.find(item => item.id == saved_item.id);
 
                 if (item) {
-                    if (process.argv.includes('--same-price')) {
-                        item.depositForValue(saved_item.market_value);
-                    } else {
-                        item.deposit(saved_item.custom_price_percentage);
+                    try {
+                        if (process.argv.includes('--same-price')) {
+                            await item.depositForValue(saved_item.market_value);
+                        } else {
+                            await item.deposit(saved_item.custom_price_percentage);
+                        }
+
+                        deposited_item_ids.push(item.id);
+                    } catch(e) {
+                        console.error(`There was an error depositing your ${item.market_name}. Only the successful deposits were removed from your local state, meaning you can attempt to go online again to deposit the rest.`);
+                        console.error('Please try again in a few minutes from now. If the error persists, please open an issue on our GitHub page. When doing so, please include the following error message:');
+                        console.error(e);
+
+                        break;
                     }
                 } else {
                     console.log('Item not found: ', saved_item.market_name);
                 }
-            })
+            }
 
-            fs.writeFileSync('./state.json', JSON.stringify([]));
+            let new_state = local_state.filter(item => !deposited_item_ids.includes(item.id));
+
+            fs.writeFileSync('./state.json', JSON.stringify(new_state));
 
             console.log('Inventory loaded from state.json');
         });
