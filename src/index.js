@@ -12,6 +12,10 @@ if (process.argv.includes('offline')) {
         let state = [];
 
         for (let item of trades.deposits) {
+            if (!item.cancellable()) {
+                continue;
+            }
+
             try {
                 await item.cancel();
             } catch(e) {
