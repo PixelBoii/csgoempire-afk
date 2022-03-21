@@ -7,7 +7,7 @@
     "offline": "node src/index.js offline"
   },
   "dependencies": {
-    "csgoempire-wrapper": "^0.1.7",
+    "csgoempire-wrapper": "^0.1.9",
     "dotenv": "^15.0.0"
   }
 }
