@@ -81,6 +81,27 @@ if (process.argv.includes('offline')) {
     } else {
         console.error('No state file found. Please run `node index.js offline` first.');
     }
+} else if (process.argv.includes('take-snapshot')) {
+    account.getActiveTrades().then(async trades => {
+        let state = [];
+
+        for (let item of trades.deposits) {
+            if (!item.cancellable()) {
+                continue;
+            }
+
+            state.push({
+                id: item.id,
+                market_name: item.market_name,
+                custom_price_percentage: item.custom_price_percentage,
+                market_value: item.market_value,
+            });
+        }
+
+        fs.writeFileSync('./state.json', JSON.stringify(state));
+
+        console.log('Inventory saved to state.json without cancelling any items.');
+    });
 } else {
     console.log('Usage: node src/index.js [online|offline] [-- --same-price]');
 }

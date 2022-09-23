@@ -4,7 +4,8 @@
   "scripts": {
     "start": "node src/index.js",
     "online": "node src/index.js online",
-    "offline": "node src/index.js offline"
+    "offline": "node src/index.js offline",
+    "take-snapshot": "node src/index.js take-snapshot"
   },
   "dependencies": {
     "csgoempire-wrapper": "^0.1.9",
