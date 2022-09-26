@@ -22,7 +22,15 @@ export default async function(account) {
     let itemsPendingRelist = {};
 
     const inventoryItems = local_state.map(saved_item => {
-        let inventoryItem = inventory.items.find(item => item.id == saved_item.id);
+        if (!saved_item.asset_id) {
+            console.log(`No asset id found for '${saved_item.market_name}'. It looks like you might've saved the state file in an older version of the bot. Please run 'node index.js offline' again to update the state file to the latest version, but be aware that this will remove any items currently stored in your state file.`);
+            console.log('If you want to keep the items in your state file, you can run \'npm run online\' using an older version of this bot, and then go back offline using the latest version of the bot. This will update the local state file to the latest version, while still keeping the items in your state file.');
+            console.log('Alternatively, you can manually add the asset id for each item to the state file. You can find the asset id for each item on Steam or via CSGOEmpire\'s API.');
+            console.log('For now, we\'ll simply skip depositing this item.');
+            return null;
+        }
+
+        let inventoryItem = inventory.items.find(item => item.asset_id == saved_item.asset_id);
 
         if (!inventoryItem) {
             console.log('Item not found: ', saved_item.market_name);
