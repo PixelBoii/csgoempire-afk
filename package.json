@@ -1,6 +1,7 @@
 {
   "name": "csgoempire-afk-system",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "node src/index.js",
     "online": "node src/index.js online",
@@ -8,7 +9,7 @@
     "take-snapshot": "node src/index.js take-snapshot"
   },
   "dependencies": {
-    "csgoempire-wrapper": "^0.1.9",
+    "csgoempire-wrapper": "^0.1.15",
     "dotenv": "^15.0.0"
   }
 }
