@@ -64,13 +64,17 @@ export default async function(account) {
         // we wait 2.5 seconds before checking the trade status to make sure the deposit
         // response has been received.
         await sleep(2500);
-    
-        // Ensure it's a deposit, has a status of 2 (Processing) and it was waiting on being relisted
-        if (event.type == 'deposit' && event.data.status == 2 && itemsPendingRelist[event.data.items[0].asset_id]) {
-            delete itemsPendingRelist[event.data.items[0].asset_id];
-            deposited_item_ids.push(event.data.items[0].id);
 
-            console.log(`Item ${event.data.items[0].market_name} was successfully relisted. (${Object.keys(itemsPendingRelist).length} remaining)`);
+        let events = Array.isArray(event) ? event : [event];
+
+        for (let event of events) {
+            // Ensure it's a deposit, has a status of 2 (Processing) and it was waiting on being relisted
+            if (event.type == 'deposit' && event.data.status == 2 && itemsPendingRelist[event.data.item.asset_id]) {
+                delete itemsPendingRelist[event.data.item.asset_id];
+                deposited_item_ids.push(event.data.item_id);
+
+                console.log(`Item ${event.data.item.market_name} was successfully relisted. (${Object.keys(itemsPendingRelist).length} remaining)`);
+            }
         }
 
         finishIfDone();
