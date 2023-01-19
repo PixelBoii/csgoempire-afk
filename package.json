@@ -9,7 +9,7 @@
     "take-snapshot": "node src/index.js take-snapshot"
   },
   "dependencies": {
-    "csgoempire-wrapper": "^0.1.17",
+    "csgoempire-wrapper": "^0.1.18",
     "dotenv": "^15.0.0"
   }
 }
